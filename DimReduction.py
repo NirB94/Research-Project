@@ -13,10 +13,11 @@ Running command should be:
 python3 DimReduction.py -ind indicator -t threshold_value -p fastas_directory_path
 
 For example:
+For whole preprocessing:
 python3 DimReduction.py -ind E-value -t 1e-10
 
 OR:
-
+For just UMAP presentations from an existing table:
 python3 DimReduction.py
 
 
@@ -46,8 +47,8 @@ def umap_from_excel():
     The function assumes a "Frequencies" directory exists with all relevant Excel files output by Frequencies.py module.
     The function then runs, for every excel table, the dim_red() function."""
     directory = f"{os.getcwd()}/Frequencies"
-    env_df = pd.read_csv(f"{directory}/Frequencies_of_All_Train_Environments.csv", index_col=0)
-    env_cols = Frequencies.receive_json(os.path.abspath("Columns of Environments by Criteria.json"))
+    env_df = pd.read_csv(os.path.join(directory, "Frequencies_of_All_Train_Environments.csv"), index_col=0)
+    env_cols = Frequencies.receive_json(os.path.join(directory, "Columns of Train Environments by Criteria.json"))
     for crit in env_cols.keys():
         table = env_df[env_cols[crit]]
         dim_red(table, crit)
@@ -102,8 +103,8 @@ def dim_red(freqs_table, criterion):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--indicator', '-ind', type=str, help='Insert sort indicator. Can be E-value or Score only',
-                        required=True)
-    parser.add_argument('--threshold', '-t', type=float, help='Insert threshold', required=True)
+                        required=False)
+    parser.add_argument('--threshold', '-t', type=float, help='Insert threshold', required=False)
     parser.add_argument('--path', '-p', type=str, help='Insert path for fasta files. The code takes all files that '
                                                        'end with "contigs.min10k.proteins.faa".', required=False)
     args = parser.parse_args()
